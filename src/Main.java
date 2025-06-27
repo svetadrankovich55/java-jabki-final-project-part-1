@@ -1,15 +1,23 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
-    public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
+import exception.DuplicateIdException;
+import model.Book;
+import model.User;
+import service.Library;
+import ui.ConsoleMenu;
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
-        }
+
+public class Main {
+    public static void main(String[] args) throws DuplicateIdException {
+        Library library = new Library();
+        initializeSampleData(library);
+        ConsoleMenu consoleMenu = new ConsoleMenu(library);
+        consoleMenu.start();
+    }
+
+    private static void initializeSampleData(Library library) throws DuplicateIdException {
+        library.addBook(new Book(1, "1984", "George Orwell", 1949, 5, 3));
+        library.addBook(new Book(2, "The Hobbit", "J.R.R. Tolkien", 1937, 3, 1));
+        library.addBook(new Book(3, "Dune", "Frank Herbert", 1965, 4, 4));
+        library.addUser(new User(1, "Alice", "alice@example.com"));
+        library.addUser(new User(2, "Bob", "bob@example.com"));
     }
 }
