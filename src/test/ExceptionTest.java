@@ -1,8 +1,9 @@
 package test;
 
 import exception.DuplicateIdException;
-import exception.ObjectNotFoundException;
+import exception.BookNotFoundException;
 import exception.UserNotFoundException;
+import exception.UsersNotFoundException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +18,7 @@ public class ExceptionTest {
 
     @Test
     void testObjectNotFoundException() {
-        ObjectNotFoundException exception = new ObjectNotFoundException("котиков");
+        BookNotFoundException exception = new BookNotFoundException("котиков");
         assertEquals("По данному запросу котиков не найдено", exception.getMessage());
     }
 
@@ -25,5 +26,11 @@ public class ExceptionTest {
     void testUserNotFoundException() {
         UserNotFoundException exception = new UserNotFoundException(456);
         assertEquals("Пользователь с ID 456 не найден", exception.getMessage());
+    }
+
+    @Test
+    void testUsersNotFoundException() {
+        UsersNotFoundException exception = new UsersNotFoundException("пользователи");
+        assertEquals("По данному запросу пользователи не найдены", exception.getMessage());
     }
 }

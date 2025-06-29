@@ -1,16 +1,19 @@
 package model;
 
+import java.util.Objects;
+
 public class Book {
 
-    private int id;
+    private static int lastId = 0;
+    private final int id;
     private String title;
     private String author;
     private int year;
     private int totalCopies;
     private int availableCopies;
 
-    public Book(int id, String title, String author, int year, int totalCopies, int availableCopies) {
-        this.id = id;
+    public Book(String title, String author, int year, int totalCopies, int availableCopies) {
+        this.id = ++lastId;
         this.title = title;
         this.author = author;
         this.year = year;
@@ -20,10 +23,6 @@ public class Book {
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getTitle() {
@@ -55,9 +54,6 @@ public class Book {
     }
 
     public void setTotalCopies(int totalCopies) {
-        if (totalCopies < 0) {
-            throw new IllegalArgumentException("Общее количество копий не может быть отрицательным");
-        }
         this.totalCopies = totalCopies;
     }
 
@@ -66,12 +62,19 @@ public class Book {
     }
 
     public void setAvailableCopies(int availableCopies) {
-        if (availableCopies < 0) {
-            throw new IllegalArgumentException("Доступное количество копий не может быть отрицательным");
-        }
-        if (availableCopies > totalCopies) {
-            throw new IllegalArgumentException("Доступное количество копий не может превышать общее количество");
-        }
         this.availableCopies = availableCopies;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Book book = (Book) o;
+        return id == book.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

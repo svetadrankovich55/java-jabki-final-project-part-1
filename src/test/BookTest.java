@@ -1,16 +1,21 @@
 package test;
 
 import model.Book;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BookTest {
 
+    @BeforeEach
+    void resetCounter() throws Exception {
+        TestUtils.resetAutoIncrementCounters(Book.class);
+    }
+
     @Test
     void testBookCreation() {
-        Book book = new Book(1, "Title", "Author", 2025, 5, 3);
+        Book book = new Book( "Title", "Author", 2025, 5, 3);
 
         assertEquals(1, book.getId());
         assertEquals("Title", book.getTitle());
@@ -21,23 +26,8 @@ public class BookTest {
     }
 
     @Test
-    void testSetInvalidTotalCopies() {
-        Book book = new Book(1, "Title", "Author", 2025, 5, 3);
-
-        assertThrows(IllegalArgumentException.class, () -> book.setTotalCopies(-1));
-    }
-
-    @Test
-    void testSetInvalidAvailableCopies() {
-        Book book = new Book(1, "Title", "Author", 2025, 5, 3);
-
-        assertThrows(IllegalArgumentException.class, () -> book.setAvailableCopies(-1));
-        assertThrows(IllegalArgumentException.class, () -> book.setAvailableCopies(6));
-    }
-
-    @Test
     void testSettersAndGetters() {
-        Book book = new Book(1, "Мир и война", "Толстой", 1818, 5000000, 3000000);
+        Book book = new Book( "Мир и война", "Толстой", 1818, 5000000, 3000000);
         book.setTitle("Война и мир");
         book.setAuthor("Толстой Л.Н.");
         book.setYear(1867);

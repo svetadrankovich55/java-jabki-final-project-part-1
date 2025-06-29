@@ -10,9 +10,10 @@ import java.util.List;
 import java.util.Map;
 
 public class Library {
+    private static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9]+";
 
-    private Map<Integer, Book> books;
-    private Map<Integer, User> users;
+    private final Map<Integer, Book> books;
+    private final Map<Integer, User> users;
 
     public Library() {
         this.books = new HashMap<>();
@@ -24,6 +25,15 @@ public class Library {
         if (books.containsKey(book.getId())) {
             throw new DuplicateIdException("Книга", book.getId());
         }
+        if (book.getTotalCopies() < 0) {
+            throw new IllegalArgumentException("Общее количество копий не может быть отрицательным");
+        }
+        if (book.getAvailableCopies() < 0) {
+            throw new IllegalArgumentException("Доступное количество копий не может быть отрицательным");
+        }
+        if (book.getAvailableCopies() > book.getTotalCopies()) {
+            throw new IllegalArgumentException("Доступное количество копий не может превышать общее количество");
+        }
         books.put(book.getId(), book);
     }
 
@@ -31,67 +41,21 @@ public class Library {
         return new ArrayList<>(books.values());
     }
 
-    public List<Book> searchBooksByTitle(String title) {
+    public List<Book> searchBooksByTitleAndAuthorAndYear(String title, String author, Integer year) {
         List<Book> result = new ArrayList<>();
         for (Book book : books.values()) {
-            if (book.getTitle().toLowerCase().contains(title.toLowerCase())) {
-                result.add(book);
-            }
-        }
-        return result;
-    }
+            boolean matches = true;
 
-    public List<Book> searchBooksByAuthor(String author) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : books.values()) {
-            if (book.getAuthor().toLowerCase().contains(author.toLowerCase())) {
-                result.add(book);
+            if (title != null && !title.trim().isEmpty()) {
+                matches = matches && book.getTitle().toLowerCase().contains(title.toLowerCase().trim());
             }
-        }
-        return result;
-    }
-
-    public List<Book> searchBooksByYear(int year) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : books.values()) {
-            if (book.getYear() == year) {
-                result.add(book);
+            if (author != null && !author.trim().isEmpty()) {
+                matches = matches && book.getAuthor().toLowerCase().contains(author.toLowerCase().trim());
             }
-        }
-        return result;
-    }
-
-    public List<Book> searchBooksByTitleAndAuthor(String title, String author) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : books.values()) {
-            boolean matchesTitle = book.getTitle().toLowerCase().contains(title.toLowerCase());
-            boolean matchesAuthor = book.getAuthor().toLowerCase().contains(author.toLowerCase());
-            if (matchesTitle && matchesAuthor) {
-                result.add(book);
+            if (year != null) {
+                matches = matches && year.equals(book.getYear());
             }
-        }
-        return result;
-    }
-
-    public List<Book> searchBooksByAuthorAndYear(String author, int year) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : books.values()) {
-            boolean matchesAuthor = book.getAuthor().toLowerCase().contains(author.toLowerCase());
-            boolean matchesYear = year == book.getYear();
-            if (matchesAuthor && matchesYear) {
-                result.add(book);
-            }
-        }
-        return result;
-    }
-
-    public List<Book> searchBooksByTitleAndAuthorAndYear(String title, String author, int year) {
-        List<Book> result = new ArrayList<>();
-        for (Book book : books.values()) {
-            boolean matchesTitle = book.getTitle().toLowerCase().contains(title.toLowerCase());
-            boolean matchesAuthor = book.getAuthor().toLowerCase().contains(author.toLowerCase());
-            boolean matchesYear = year == book.getYear();
-            if (matchesTitle && matchesAuthor && matchesYear) {
+            if (matches) {
                 result.add(book);
             }
         }
@@ -103,7 +67,7 @@ public class Library {
         if (users.containsKey(user.getId())) {
             throw new DuplicateIdException("Пользователь", user.getId());
         }
-        if (user.getEmail() == null || !user.getEmail().matches("[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9]+")) {
+        if (user.getEmail() == null || !user.getEmail().matches(EMAIL_REGEX)) {
             throw new IllegalArgumentException("Некорректный email. Пример: user@example.com");
         }
         users.put(user.getId(), user);

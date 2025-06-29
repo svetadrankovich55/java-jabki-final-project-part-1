@@ -1,8 +1,9 @@
 package ui;
 
+import exception.BookNotFoundException;
 import exception.DuplicateIdException;
-import exception.ObjectNotFoundException;
 import exception.UserNotFoundException;
+import exception.UsersNotFoundException;
 import model.Book;
 import model.User;
 import service.Library;
@@ -33,37 +34,22 @@ public class ConsoleMenu {
                         showAllBooks();
                         break;
                     case "3":
-                        searchBooksByTitle();
-                        break;
-                    case "4":
-                        searchBooksByAuthor();
-                        break;
-                    case "5":
-                        searchBooksByYear();
-                        break;
-                    case "6":
-                        searchBooksByTitleAndAuthor();
-                        break;
-                    case "7":
-                        searchBooksByAuthorAndYear();
-                        break;
-                    case "8":
                         searchBooksByTitleAndAuthorAndYear();
                         break;
-                    case "9":
+                    case "4":
                         addUser();
                         break;
-                    case "10":
+                    case "5":
                         showAllUsers();
                         break;
-                    case "11":
+                    case "6":
                         searchUserById();
                         break;
-                    case "12":
+                    case "7":
                         System.out.println("Выход из программы...");
                         return;
                     default:
-                        System.out.println("Неверный ввод. Пожалуйста, выберите пункт меню от 1 до 12.");
+                        System.out.println("Неверный ввод. Пожалуйста, выберите пункт меню от 1 до 7.");
                 }
             } catch (Exception e) {
                 System.out.println("Ошибка: " + e.getMessage());
@@ -75,22 +61,16 @@ public class ConsoleMenu {
         System.out.println("\n=== ГЛАВНОЕ МЕНЮ ===");
         System.out.println("1. Добавление книги");
         System.out.println("2. Просмотр всех книг");
-        System.out.println("3. Поиск книг по названию");
-        System.out.println("4. Поиск книг по автору");
-        System.out.println("5. Поиск книг по году издания");
-        System.out.println("6. Поиск книг по названию и автору");
-        System.out.println("7. Поиск книг по автору и году издания");
-        System.out.println("8. Поиск книг по названию, автору, году издания");
-        System.out.println("9. Добавление пользователя");
-        System.out.println("10. Просмотр всех пользователей");
-        System.out.println("11. Поиск пользователя по ID");
-        System.out.println("12. Выход");
+        System.out.println("3. Поиск книг по названию, автору, году издания");
+        System.out.println("4. Добавление пользователя");
+        System.out.println("5. Просмотр всех пользователей");
+        System.out.println("6. Поиск пользователя по ID");
+        System.out.println("7. Выход");
         System.out.print("Выберите действие: ");
     }
 
     private void addBook() {
         System.out.println("\nДобавление новой книги:");
-        int id = getIntInput("ID: ");
         String title = getStringInput("Название: ");
         String author = getStringInput("Автор: ");
         int year = getIntInput("Год издания: ");
@@ -98,115 +78,79 @@ public class ConsoleMenu {
         int availableCopies = getIntInput("Количество доступных копий: ");
 
         try {
-            library.addBook(new Book(id, title, author, year, totalCopies, availableCopies));
+            library.addBook(new Book(title, author, year, totalCopies, availableCopies));
             System.out.println("Книга успешно добавлена!");
         } catch (DuplicateIdException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
-    private void showAllBooks() throws ObjectNotFoundException {
+    private void showAllBooks() throws BookNotFoundException {
         System.out.println("\nСписок всех книг:");
         List<Book> books = library.getAllBooks();
 
         if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
+            throw new BookNotFoundException("книг");
         } else {
-            for (Book book : books) {
-                printBookInfo(book);
-            }
+            printBooksInfo(books);
         }
     }
 
-    private void searchBooksByTitle() throws ObjectNotFoundException {
-        String title = getStringInput("Введите название книги для поиска: ");
-        List<Book> books = library.searchBooksByTitle(title);
+    private void searchBooksByTitleAndAuthorAndYear() throws BookNotFoundException {
+        System.out.println("\nПоиск книг (введите 0 для пропуска поля)");
 
-        if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
+        String title = getOptionalStringInput("Введите название книги: ");
+        String author = getOptionalStringInput("Введите автора: ");
+        int year = getOptionalIntInput("Введите год издания: ");
+        String processedTitle;
+
+        if ("0".equals(title)) {
+            processedTitle = null;
         } else {
-            printSearchResults(books, "книг по названию");
+            processedTitle = title;
         }
-    }
+        String processedAuthor;
 
-    private void searchBooksByAuthor() throws ObjectNotFoundException {
-        String author = getStringInput("Введите автора книги для поиска: ");
-        List<Book> books = library.searchBooksByAuthor(author);
-
-        if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
+        if ("0".equals(author)) {
+            processedAuthor = null;
         } else {
-            printSearchResults(books, "книг по автору");
+            processedAuthor = author;
         }
-    }
 
-    private void searchBooksByYear() throws ObjectNotFoundException {
-        int year = getIntInput("Введите год издания для поиска: ");
-        List<Book> books = library.searchBooksByYear(year);
-
-        if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
+        Integer processedYear;
+        if (0 == year) {
+            processedYear = null;
         } else {
-            printSearchResults(books, "книг по году издания");
+            processedYear = year;
         }
-    }
 
-    private void searchBooksByTitleAndAuthor() throws ObjectNotFoundException {
-        String title = getStringInput("Введите название книги: ");
-        String author = getStringInput("Введите автора: ");
-        List<Book> books = library.searchBooksByTitleAndAuthor(title, author);
+        List<Book> books = library.searchBooksByTitleAndAuthorAndYear(processedTitle, processedAuthor, processedYear);
 
         if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
+            throw new BookNotFoundException("книг");
         } else {
-            printSearchResults(books, "книг по названию и автору");
-        }
-    }
-
-    private void searchBooksByAuthorAndYear() throws ObjectNotFoundException {
-        String author = getStringInput("Введите автора: ");
-        int year = getIntInput("Введите год издания: ");
-        List<Book> books = library.searchBooksByAuthorAndYear(author, year);
-
-        if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
-        } else {
-            printSearchResults(books, "книг по автору и году издания");
-        }
-    }
-
-    private void searchBooksByTitleAndAuthorAndYear() throws ObjectNotFoundException {
-        String title = getStringInput("Введите название книги: ");
-        String author = getStringInput("Введите автора: ");
-        int year = getIntInput("Введите год издания: ");
-        List<Book> books = library.searchBooksByTitleAndAuthorAndYear(title, author, year);
-
-        if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
-        } else {
-            printSearchResults(books, "книг по названию, автору и году издания");
+            printSearchResults(books, "книг по заданным критериям");
         }
     }
 
     private void addUser() {
         System.out.println("\nДобавление нового пользователя:");
-        int id = getIntInput("ID пользователя: ");
         String name = getStringInput("Имя: ");
         String email = getStringInput("Email: ");
 
         try {
-            library.addUser(new User(id, name, email));
+            library.addUser(new User(name, email));
             System.out.println("Пользователь успешно добавлен!");
         } catch (DuplicateIdException | IllegalArgumentException e) {
             System.out.println("Ошибка: " + e.getMessage());
         }
     }
 
-    private void showAllUsers() throws ObjectNotFoundException {
+    private void showAllUsers() throws UsersNotFoundException {
         System.out.println("\nСписок всех пользователей:");
         List<User> users = library.getAllUsers();
         if (users.isEmpty()) {
-            throw new ObjectNotFoundException("пользователей");
+            throw new UsersNotFoundException("пользователи");
         } else {
             for (User user : users) {
                 printUserInfo(user);
@@ -224,14 +168,12 @@ public class ConsoleMenu {
         }
     }
 
-    private void printSearchResults(List<Book> books, String searchType) throws ObjectNotFoundException {
+    private void printSearchResults(List<Book> books, String searchType) throws BookNotFoundException {
         System.out.println("\nРезультаты поиска " + searchType + ":");
         if (books.isEmpty()) {
-            throw new ObjectNotFoundException("книг");
+            throw new BookNotFoundException("книг");
         } else {
-            for (Book book : books) {
-                printBookInfo(book);
-            }
+            printBooksInfo(books);
         }
     }
 
@@ -242,6 +184,12 @@ public class ConsoleMenu {
                 ", Год: " + book.getYear() +
                 ", Всего копий: " + book.getTotalCopies() +
                 ", Доступно: " + book.getAvailableCopies());
+    }
+
+    private void printBooksInfo(List<Book> books) {
+        for (Book book : books) {
+            printBookInfo(book);
+        }
     }
 
     private void printUserInfo(User user) {
@@ -255,10 +203,36 @@ public class ConsoleMenu {
         return scanner.nextLine().trim();
     }
 
-    private int getIntInput(String prompt) {
+    private String getOptionalStringInput(String str) {
+        System.out.print(str);
+        String input = scanner.nextLine().trim();
+        if (input.isEmpty()) {
+            return "0";
+        } else {
+            return input;
+        }
+    }
+
+    private Integer getOptionalIntInput(String str) {
         while (true) {
             try {
-                System.out.print(prompt);
+                System.out.print(str);
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) {
+                    return 0;
+                } else {
+                    return Integer.parseInt(input);
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Ошибка: введите целое число.");
+            }
+        }
+    }
+
+    private int getIntInput(String str) {
+        while (true) {
+            try {
+                System.out.print(str);
                 return Integer.parseInt(scanner.nextLine().trim());
             } catch (NumberFormatException e) {
                 System.out.println("Ошибка: введите целое число.");

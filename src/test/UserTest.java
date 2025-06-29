@@ -1,15 +1,22 @@
 package test;
 
 import model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 public class UserTest {
+
+    @BeforeEach
+    void resetCounter() throws Exception {
+        TestUtils.resetAutoIncrementCounters(User.class);
+    }
+
     @Test
     void testUserCreation() {
-        User user = new User(1, "Kotka", "kotka_1211@example.com");
+        User user = new User("Kotka", "kotka_1211@example.com");
 
         assertEquals(1, user.getId());
         assertEquals("Kotka", user.getName());
@@ -17,16 +24,8 @@ public class UserTest {
     }
 
     @Test
-    void testInvalidEmail() {
-        User user = new User(1, "Kotka", "kotka_1211@example.com");
-
-        assertThrows(IllegalArgumentException.class, () -> user.setEmail("invalid-email"));
-        assertThrows(IllegalArgumentException.class, () -> user.setEmail(null));
-    }
-
-    @Test
     void testSettersAndGetters() {
-        User user = new User(1, "Elena", "Elena@example.com");
+        User user = new User( "Elena", "Elena@example.com");
         user.setName("Elena Mudraya");
         user.setEmail("Mudraya@example.com");
 

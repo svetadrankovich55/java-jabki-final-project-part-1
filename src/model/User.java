@@ -1,23 +1,22 @@
 package model;
 
+import java.util.Objects;
+
 public class User {
 
-    private int id;
+    private static int lastId = 0;
+    private final int id;
     private String name;
     private String email;
 
-    public User(int id, String name, String email) {
-        this.id = id;
+    public User(String name, String email) {
+        this.id = ++lastId;
         this.name = name;
         this.email = email;
     }
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getName() {
@@ -33,9 +32,19 @@ public class User {
     }
 
     public void setEmail(String email) {
-        if (email == null || !email.matches("[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9]+")) {
-            throw new IllegalArgumentException("Некорректный email. Пример: user@example.com");
-        }
         this.email = email;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }
