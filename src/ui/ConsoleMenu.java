@@ -90,7 +90,7 @@ public class ConsoleMenu {
         List<Book> books = library.getAllBooks();
 
         if (books.isEmpty()) {
-            throw new BookNotFoundException("книг");
+            throw new BookNotFoundException();
         } else {
             printBooksInfo(books);
         }
@@ -101,7 +101,7 @@ public class ConsoleMenu {
 
         String title = getOptionalStringInput("Введите название книги: ");
         String author = getOptionalStringInput("Введите автора: ");
-        int year = getOptionalIntInput("Введите год издания: ");
+        int year = getOptionalIntInput();
         String processedTitle;
 
         if ("0".equals(title)) {
@@ -127,9 +127,9 @@ public class ConsoleMenu {
         List<Book> books = library.searchBooksByTitleAndAuthorAndYear(processedTitle, processedAuthor, processedYear);
 
         if (books.isEmpty()) {
-            throw new BookNotFoundException("книг");
+            throw new BookNotFoundException();
         } else {
-            printSearchResults(books, "книг по заданным критериям");
+            printSearchResults(books );
         }
     }
 
@@ -168,10 +168,10 @@ public class ConsoleMenu {
         }
     }
 
-    private void printSearchResults(List<Book> books, String searchType) throws BookNotFoundException {
-        System.out.println("\nРезультаты поиска " + searchType + ":");
+    private void printSearchResults(List<Book> books) throws BookNotFoundException {
+        System.out.println("\nРезультаты поиска книг по заданным критериям:");
         if (books.isEmpty()) {
-            throw new BookNotFoundException("книг");
+            throw new BookNotFoundException();
         } else {
             printBooksInfo(books);
         }
@@ -213,10 +213,10 @@ public class ConsoleMenu {
         }
     }
 
-    private Integer getOptionalIntInput(String str) {
+    private Integer getOptionalIntInput() {
         while (true) {
             try {
-                System.out.print(str);
+                System.out.print("Введите год издания: ");
                 String input = scanner.nextLine().trim();
                 if (input.isEmpty()) {
                     return 0;
