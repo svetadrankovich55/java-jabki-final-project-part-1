@@ -1,7 +1,8 @@
 package test;
 
-import exception.DuplicateIdException;
+import exception.*;
 import model.Book;
+import model.Loan;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -95,5 +96,45 @@ public class LibraryTest {
         User results =  library.getUserById(1);
 
         assertEquals("Alice", results.getName());
+    }
+
+    @Test
+    void testLoanBook() throws Exception {
+        library.loanBook(book1.getId(), user1.getId());
+
+        assertEquals(1, user1.getCurrentLoans().size());
+        assertEquals(book1.getId(), user1.getCurrentLoans().get(0).getBookId());
+        assertEquals(2999999, book1.getAvailableCopies());
+    }
+
+    @Test
+    void testReturnBook() throws Exception {
+        library.loanBook(book2.getId(), user1.getId());
+        library.returnBook(book2.getId(), user1.getId());
+
+        assertTrue(user1.getCurrentLoans().isEmpty());
+        assertEquals(1000000, book2.getAvailableCopies());
+
+        List<Loan> loans = library.getLoansByUserByBook(user1.getId(), book2.getId());
+        assertNotNull(loans.get(0).getReturnDate());
+    }
+
+    @Test
+    void testGetLoansByUserByBook() throws Exception {
+        library.loanBook(book2.getId(), user1.getId());
+
+        // Поиск по пользователю
+        List<Loan> userLoans = library.getLoansByUserByBook(user1.getId(), null);
+        assertEquals(1, userLoans.size());
+        assertEquals(user1.getId(), userLoans.get(0).getUserId());
+
+        // Поиск по книге
+        List<Loan> bookLoans = library.getLoansByUserByBook(null, book2.getId());
+        assertEquals(1, bookLoans.size());
+        assertEquals(book2.getId(), bookLoans.get(0).getBookId());
+
+        // Поиск по обоим параметрам
+        List<Loan> bothLoans = library.getLoansByUserByBook(user1.getId(), book2.getId());
+        assertEquals(1, bothLoans.size());
     }
 }

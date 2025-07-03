@@ -1,10 +1,14 @@
 package test;
 
+import model.Loan;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class UserTest {
@@ -31,5 +35,49 @@ public class UserTest {
 
         assertEquals("Elena Mudraya", user.getName());
         assertEquals("Mudraya@example.com", user.getEmail());
+    }
+
+    @Test
+    void testAddLoan() {
+        User user = new User( "Elena", "Elena@example.com");
+        Loan loan1 = new Loan(1, user.getId(), LocalDate.now());
+
+        user.addLoan(loan1);
+        List<Loan> loans = user.getCurrentLoans();
+
+        assertEquals(1, loans.size());
+        assertTrue(loans.contains(loan1));
+    }
+
+    @Test
+    void testAddLoanMultipleLoans() {
+        User user = new User( "Elena", "Elena@example.com");
+        Loan loan1 = new Loan(1, user.getId(), LocalDate.now());
+        Loan loan2 = new Loan(2, user.getId(), LocalDate.now());
+
+        user.addLoan(loan1);
+        user.addLoan(loan2);
+        List<Loan> loans = user.getCurrentLoans();
+
+        assertEquals(2, loans.size());
+        assertTrue(loans.contains(loan1));
+        assertTrue(loans.contains(loan2));
+    }
+
+    @Test
+    void testRemoveLoan() {
+        User user = new User( "Elena", "Elena@example.com");
+        Loan loan1 = new Loan(1, user.getId(), LocalDate.now());
+        Loan loan2 = new Loan(2, user.getId(), LocalDate.now());
+
+        user.addLoan(loan1);
+        user.addLoan(loan2);
+
+        user.removeLoan(loan1);
+        List<Loan> loans = user.getCurrentLoans();
+
+        assertEquals(1, loans.size());
+        assertFalse(loans.contains(loan1));
+        assertTrue(loans.contains(loan2));
     }
 }

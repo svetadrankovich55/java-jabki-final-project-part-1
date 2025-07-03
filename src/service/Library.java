@@ -1,9 +1,16 @@
 package service;
 
 import exception.DuplicateIdException;
+import exception.BookNotFoundException;
+import exception.UserNotFoundException;
+import exception.UserLoanLimitReachedException;
+import exception.BookNotAvailableException;
+import exception.BookNotLoanedException;
 import model.Book;
+import model.Loan;
 import model.User;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -11,13 +18,16 @@ import java.util.Map;
 
 public class Library {
     private static final String EMAIL_REGEX = "[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\\.[a-zA-Z0-9]+";
+    private static final int AMOUNT_LOAN_BOOK = 3;
 
     private final Map<Integer, Book> books;
     private final Map<Integer, User> users;
+    private final List<Loan> loans;
 
     public Library() {
         this.books = new HashMap<>();
         this.users = new HashMap<>();
+        this.loans = new ArrayList<>();
     }
 
     // Методы работы с книгами
@@ -79,5 +89,82 @@ public class Library {
 
     public User getUserById(int id) {
         return users.get(id);
+    }
+
+    public void loanBook(int bookId, int userId) throws BookNotFoundException, UserNotFoundException, UserLoanLimitReachedException, BookNotAvailableException {
+        User user = users.get(userId);
+        Book book = books.get(bookId);
+        Loan loan = new Loan(bookId, userId, LocalDate.now());
+
+        if (book == null) {
+            throw new BookNotFoundException();
+        }
+        if (user == null) {
+            throw new UserNotFoundException(userId);
+        }
+        if (book.getAvailableCopies() <= 0) {
+            throw new BookNotAvailableException();
+        }
+        if (user.getCurrentLoans().size() >= AMOUNT_LOAN_BOOK) {
+            throw new UserLoanLimitReachedException(AMOUNT_LOAN_BOOK);
+        }
+
+        loans.add(loan);
+        user.addLoan(loan);
+        book.setAvailableCopies(book.getAvailableCopies() - 1);
+    }
+
+    public void returnBook(int bookId, int userId) throws BookNotFoundException, UserNotFoundException, BookNotLoanedException{
+        User user = users.get(userId);
+        Book book = books.get(bookId);
+
+        if (book == null) {
+            throw new BookNotFoundException();
+        }
+        if (user == null) {
+            throw new UserNotFoundException(userId);
+        }
+
+        Loan loanToReturn = null;
+        for (Loan loan : user.getCurrentLoans()){
+            if (loan.getBookId() == bookId && loan.getReturnDate() == null){
+                loanToReturn = loan;
+                break;
+            }
+        }
+        if (loanToReturn == null) {
+            throw new BookNotLoanedException ();
+        }
+
+        loanToReturn.setReturnDate(LocalDate.now());
+        user.removeLoan(loanToReturn);
+        book.setAvailableCopies(book.getAvailableCopies() + 1);
+    }
+
+    public List<Loan> getLoansByUserByBook(Integer userId, Integer bookId) {
+        List<Loan> result = new ArrayList<>();
+        for (Loan loan : loans) {
+            boolean matches = true;
+            if (userId != null) {
+                matches = matches && loan.getUserId() == userId;
+            }
+            if (bookId != null) {
+                matches = matches &&loan.getBookId() == bookId;
+            }
+            if (matches) {
+                result.add(loan);
+            }
+        }
+        return result;
+    }
+
+    public List<Loan> getOverdueLoans() {
+        List<Loan> result = new ArrayList<>();
+        for (Loan loan : loans) {
+            if (loan.isOverdue()) {
+                result.add(loan);
+            }
+        }
+        return result;
     }
 }

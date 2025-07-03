@@ -4,7 +4,10 @@ import exception.BookNotFoundException;
 import exception.DuplicateIdException;
 import exception.UserNotFoundException;
 import exception.UsersNotFoundException;
+import exception.OverdueLoansNotFoundException;
+import exception.LoansNotFoundException;
 import model.Book;
+import model.Loan;
 import model.User;
 import service.Library;
 
@@ -46,10 +49,22 @@ public class ConsoleMenu {
                         searchUserById();
                         break;
                     case "7":
+                        loanBook();
+                        break;
+                    case "8":
+                        returnBook();
+                        break;
+                    case "9":
+                        loansByUserByBookReport();
+                        break;
+                    case "10":
+                        overdueLoansReport();
+                        break;
+                    case "11":
                         System.out.println("Выход из программы...");
                         return;
                     default:
-                        System.out.println("Неверный ввод. Пожалуйста, выберите пункт меню от 1 до 7.");
+                        System.out.println("Неверный ввод. Пожалуйста, выберите пункт меню от 1 до 11.");
                 }
             } catch (Exception e) {
                 System.out.println("Ошибка: " + e.getMessage());
@@ -65,7 +80,11 @@ public class ConsoleMenu {
         System.out.println("4. Добавление пользователя");
         System.out.println("5. Просмотр всех пользователей");
         System.out.println("6. Поиск пользователя по ID");
-        System.out.println("7. Выход");
+        System.out.println("7. Выдача книги ");
+        System.out.println("8. Возврат книги");
+        System.out.println("9. Просмотр истории выдач по конкретному пользователю, по конкретной книге");
+        System.out.println("10. Поиск просроченных выдач");
+        System.out.println("11. Выход");
         System.out.print("Выберите действие: ");
     }
 
@@ -101,16 +120,15 @@ public class ConsoleMenu {
 
         String title = getOptionalStringInput("Введите название книги: ");
         String author = getOptionalStringInput("Введите автора: ");
-        int year = getOptionalIntInput();
+        int year = getOptionalIntInput("Введите год издания: ");
         String processedTitle;
-
         if ("0".equals(title)) {
             processedTitle = null;
         } else {
             processedTitle = title;
         }
-        String processedAuthor;
 
+        String processedAuthor;
         if ("0".equals(author)) {
             processedAuthor = null;
         } else {
@@ -168,6 +186,69 @@ public class ConsoleMenu {
         }
     }
 
+    private void loanBook(){
+        System.out.println("\nОформление выдачи книги:");
+        int bookId = getIntInput("Введите ID книги: ");
+        int userId = getIntInput("Введите ID пользователя: ");
+        try {
+            library.loanBook(bookId, userId);
+            System.out.println("Книга успешно выдана!");
+        } catch (Exception e) {
+            System.out.println("Ошибка при выдаче книги: " + e.getMessage());
+        }
+    }
+
+    private void returnBook(){
+        System.out.println("\nОформление возврата книги:");
+        int bookId = getIntInput("Введите ID книги: ");
+        int userId = getIntInput("Введите ID пользователя: ");
+        try {
+            library.returnBook(bookId, userId);
+            System.out.println("Книга успешно возвращена!");
+        } catch (Exception e) {
+            System.out.println("Ошибка при возврате книги: " + e.getMessage());
+        }
+    }
+
+    private void loansByUserByBookReport() {
+        System.out.println("\nПросмотр истории выдач (введите 0 для пропуска поля)");
+
+        int userId = getOptionalIntInput("Введите ID пользователя: ");
+        int bookId = getOptionalIntInput("Введите ID книги: ");
+
+        Integer processedUserId;
+        if (0 == userId) {
+            processedUserId = null;
+        } else {
+            processedUserId = userId;
+        }
+        Integer processedBookId;
+        if (0 == bookId) {
+            processedBookId = null;
+        } else {
+            processedBookId = bookId;
+        }
+        List<Loan> loans = library.getLoansByUserByBook(processedUserId, processedBookId);
+
+        if (loans.isEmpty()) {
+            throw new LoansNotFoundException();
+        } else {
+            System.out.println("Найдено " + loans.size() + " записей:");
+            printLoans(loans);
+        }
+    }
+
+    private void overdueLoansReport() {
+        System.out.println("\nПросроченные выдачи");
+        List<Loan> loans = library.getOverdueLoans();
+        if (loans.isEmpty()) {
+            throw new OverdueLoansNotFoundException();
+        } else {
+            System.out.println("Просроченные выдачи (более 30 дней):");
+            printLoans(loans);
+        }
+    }
+
     private void printSearchResults(List<Book> books) throws BookNotFoundException {
         System.out.println("\nРезультаты поиска книг по заданным критериям:");
         if (books.isEmpty()) {
@@ -198,6 +279,19 @@ public class ConsoleMenu {
                 ", Email: " + user.getEmail());
     }
 
+    private void printLoanInfo(Loan loan) {
+        System.out.println("ID книги: " + loan.getBookId() +
+                ", ID пользователя: " + loan.getUserId() +
+                ", Дата выдачи книги: " + loan.getLoanDate()+
+                ", Дата возврата книги: " + loan.getReturnDate());
+    }
+
+    private void printLoans(List<Loan> loans) {
+        for (Loan loan : loans) {
+           printLoanInfo(loan);
+        }
+    }
+
     private String getStringInput(String str) {
         System.out.print(str);
         return scanner.nextLine().trim();
@@ -213,10 +307,10 @@ public class ConsoleMenu {
         }
     }
 
-    private Integer getOptionalIntInput() {
+    private Integer getOptionalIntInput(String str) {
         while (true) {
             try {
-                System.out.print("Введите год издания: ");
+                System.out.print(str);
                 String input = scanner.nextLine().trim();
                 if (input.isEmpty()) {
                     return 0;

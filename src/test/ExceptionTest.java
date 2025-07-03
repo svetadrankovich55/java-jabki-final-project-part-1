@@ -1,9 +1,6 @@
 package test;
 
-import exception.DuplicateIdException;
-import exception.BookNotFoundException;
-import exception.UserNotFoundException;
-import exception.UsersNotFoundException;
+import exception.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -18,8 +15,8 @@ public class ExceptionTest {
 
     @Test
     void testObjectNotFoundException() {
-        BookNotFoundException exception = new BookNotFoundException("котиков");
-        assertEquals("По данному запросу котиков не найдено", exception.getMessage());
+        BookNotFoundException exception = new BookNotFoundException();
+        assertEquals("По данному запросу книг не найдено", exception.getMessage());
     }
 
     @Test
@@ -32,5 +29,34 @@ public class ExceptionTest {
     void testUsersNotFoundException() {
         UsersNotFoundException exception = new UsersNotFoundException("пользователи");
         assertEquals("По данному запросу пользователи не найдены", exception.getMessage());
+    }
+
+    @Test
+    void testBookNotAvailableException() {
+        BookNotAvailableException exception = new BookNotAvailableException();
+        assertEquals("Нет доступных копий для этой книги", exception.getMessage());
+    }
+
+    @Test
+    void testBookNotLoanedException() {
+        BookNotLoanedException exception = new BookNotLoanedException();
+        assertEquals("Эта книга не была выдана этому пользователю", exception.getMessage());
+    }
+
+    @Test
+    void testLoansNotFoundException() {
+        LoansNotFoundException exception = new LoansNotFoundException();
+        assertEquals("По заданным критериям выдачи не найдены.", exception.getMessage());
+    }
+    @Test
+    void testOverdueLoansNotFoundException() {
+        OverdueLoansNotFoundException exception = new OverdueLoansNotFoundException();
+        assertEquals("Нет просроченных выдач.", exception.getMessage());
+    }
+
+    @Test
+    void testUserLoanLimitReachedException() {
+        UserLoanLimitReachedException exception = new UserLoanLimitReachedException(4);
+        assertEquals("У пользователя уже максимальное количество книг 4", exception.getMessage());
     }
 }
