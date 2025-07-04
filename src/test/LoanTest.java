@@ -27,7 +27,7 @@ public class LoanTest {
 
     @Test
     void testLoanCreationLoanDateIsNull() {
-        assertThrows(NullPointerException.class,() -> new Loan(testBookId, testUserId, null));
+        assertThrows(NullPointerException.class, () -> new Loan(testBookId, testUserId, null));
     }
 
     @Test
@@ -42,14 +42,14 @@ public class LoanTest {
     void testSetReturnDateBeforeLoanDate() {
         Loan loan = new Loan(testBookId, testUserId, testLoanDate);
 
-        assertThrows(IllegalArgumentException.class,() -> loan.setReturnDate(testPastDate));
+        assertThrows(IllegalArgumentException.class, () -> loan.setReturnDate(testPastDate));
     }
 
     @Test
     void testSetReturnDateIsNull() {
         Loan loan = new Loan(testBookId, testUserId, testLoanDate);
 
-        assertThrows(NullPointerException.class,() -> loan.setReturnDate(null));
+        assertThrows(NullPointerException.class, () -> loan.setReturnDate(null));
     }
 
     @Test

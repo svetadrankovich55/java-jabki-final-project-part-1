@@ -1,6 +1,6 @@
 package test;
 
-import exception.*;
+import exception.DuplicateIdException;
 import model.Book;
 import model.Loan;
 import model.User;
@@ -25,10 +25,10 @@ public class LibraryTest {
         TestUtils.resetAutoIncrementCounters(User.class, Book.class);
 
         library = new Library();
-        book1 = new Book( "Война и мир", "Толстой Л.Н.", 1867, 5000000, 3000000);
-        book2 = new Book( "Преступление и наказание", "Достоевский Ф.М.", 1866, 3000000, 1000000);
-        user1 = new User( "Alice", "alice@example.com");
-        user2 = new User( "Bob", "bob@example.com");
+        book1 = new Book("Война и мир", "Толстой Л.Н.", 1867, 5000000, 3000000);
+        book2 = new Book("Преступление и наказание", "Достоевский Ф.М.", 1866, 3000000, 1000000);
+        user1 = new User("Alice", "alice@example.com");
+        user2 = new User("Bob", "bob@example.com");
 
         library.addBook(book1);
         library.addBook(book2);
@@ -37,7 +37,7 @@ public class LibraryTest {
 
     @Test
     void testAddBook() throws DuplicateIdException {
-        Book newBook = new Book( "New Book", "Author", 2022, 2, 2);
+        Book newBook = new Book("New Book", "Author", 2022, 2, 2);
         library.addBook(newBook);
 
         assertEquals(3, library.getAllBooks().size());
@@ -55,9 +55,9 @@ public class LibraryTest {
 
     @Test
     void testSearchBooksByTitleAndAuthorAndYear() throws DuplicateIdException {
-        Book newBook = new Book( "Великий Гэтсби", "Фрэнсиса Скотта Фицджеральда", 1925, 2, 2);
+        Book newBook = new Book("Великий Гэтсби", "Фрэнсиса Скотта Фицджеральда", 1925, 2, 2);
         library.addBook(newBook);
-        Book newBook1 = new Book( "Тихий Дон", "Шолохов М.А.", 1925, 2, 2);
+        Book newBook1 = new Book("Тихий Дон", "Шолохов М.А.", 1925, 2, 2);
         library.addBook(newBook1);
 
         List<Book> results = library.searchBooksByTitleAndAuthorAndYear("Великий Гэтсби", "Фрэнсиса Скотта Фицджеральда", 1925);
@@ -75,7 +75,7 @@ public class LibraryTest {
 
     @Test
     void testAddUserWithInvalidEmail() {
-        assertThrows(IllegalArgumentException.class, () -> library.addUser(new User( "Invalid", "no-email")));
+        assertThrows(IllegalArgumentException.class, () -> library.addUser(new User("Invalid", "no-email")));
     }
 
     @Test
@@ -85,15 +85,15 @@ public class LibraryTest {
 
     @Test
     void testGetAllUsers() {
-        List<User> results =  library.getAllUsers();
+        List<User> results = library.getAllUsers();
 
         assertEquals(1, library.getAllUsers().size());
         assertEquals("Alice", results.get(0).getName());
     }
-    
+
     @Test
     void testGetUserById() {
-        User results =  library.getUserById(1);
+        User results = library.getUserById(1);
 
         assertEquals("Alice", results.getName());
     }

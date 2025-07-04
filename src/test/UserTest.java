@@ -29,7 +29,7 @@ public class UserTest {
 
     @Test
     void testSettersAndGetters() {
-        User user = new User( "Elena", "Elena@example.com");
+        User user = new User("Elena", "Elena@example.com");
         user.setName("Elena Mudraya");
         user.setEmail("Mudraya@example.com");
 
@@ -39,7 +39,7 @@ public class UserTest {
 
     @Test
     void testAddLoan() {
-        User user = new User( "Elena", "Elena@example.com");
+        User user = new User("Elena", "Elena@example.com");
         Loan loan1 = new Loan(1, user.getId(), LocalDate.now());
 
         user.addLoan(loan1);
@@ -51,7 +51,7 @@ public class UserTest {
 
     @Test
     void testAddLoanMultipleLoans() {
-        User user = new User( "Elena", "Elena@example.com");
+        User user = new User("Elena", "Elena@example.com");
         Loan loan1 = new Loan(1, user.getId(), LocalDate.now());
         Loan loan2 = new Loan(2, user.getId(), LocalDate.now());
 
@@ -66,7 +66,7 @@ public class UserTest {
 
     @Test
     void testRemoveLoan() {
-        User user = new User( "Elena", "Elena@example.com");
+        User user = new User("Elena", "Elena@example.com");
         Loan loan1 = new Loan(1, user.getId(), LocalDate.now());
         Loan loan2 = new Loan(2, user.getId(), LocalDate.now());
 

@@ -48,6 +48,7 @@ public class ExceptionTest {
         LoansNotFoundException exception = new LoansNotFoundException();
         assertEquals("По заданным критериям выдачи не найдены.", exception.getMessage());
     }
+
     @Test
     void testOverdueLoansNotFoundException() {
         OverdueLoansNotFoundException exception = new OverdueLoansNotFoundException();

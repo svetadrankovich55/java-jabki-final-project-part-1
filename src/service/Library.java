@@ -6,6 +6,7 @@ import exception.UserNotFoundException;
 import exception.UserLoanLimitReachedException;
 import exception.BookNotAvailableException;
 import exception.BookNotLoanedException;
+
 import model.Book;
 import model.Loan;
 import model.User;
@@ -114,7 +115,7 @@ public class Library {
         book.setAvailableCopies(book.getAvailableCopies() - 1);
     }
 
-    public void returnBook(int bookId, int userId) throws BookNotFoundException, UserNotFoundException, BookNotLoanedException{
+    public void returnBook(int bookId, int userId) throws BookNotFoundException, UserNotFoundException, BookNotLoanedException {
         User user = users.get(userId);
         Book book = books.get(bookId);
 
@@ -126,14 +127,14 @@ public class Library {
         }
 
         Loan loanToReturn = null;
-        for (Loan loan : user.getCurrentLoans()){
-            if (loan.getBookId() == bookId && loan.getReturnDate() == null){
+        for (Loan loan : user.getCurrentLoans()) {
+            if (loan.getBookId() == bookId && loan.getReturnDate() == null) {
                 loanToReturn = loan;
                 break;
             }
         }
         if (loanToReturn == null) {
-            throw new BookNotLoanedException ();
+            throw new BookNotLoanedException();
         }
 
         loanToReturn.setReturnDate(LocalDate.now());
@@ -149,7 +150,7 @@ public class Library {
                 matches = matches && loan.getUserId() == userId;
             }
             if (bookId != null) {
-                matches = matches &&loan.getBookId() == bookId;
+                matches = matches && loan.getBookId() == bookId;
             }
             if (matches) {
                 result.add(loan);

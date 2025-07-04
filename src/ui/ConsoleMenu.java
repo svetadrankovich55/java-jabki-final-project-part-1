@@ -6,6 +6,7 @@ import exception.UserNotFoundException;
 import exception.UsersNotFoundException;
 import exception.OverdueLoansNotFoundException;
 import exception.LoansNotFoundException;
+
 import model.Book;
 import model.Loan;
 import model.User;
@@ -147,7 +148,7 @@ public class ConsoleMenu {
         if (books.isEmpty()) {
             throw new BookNotFoundException();
         } else {
-            printSearchResults(books );
+            printSearchResults(books);
         }
     }
 
@@ -186,7 +187,7 @@ public class ConsoleMenu {
         }
     }
 
-    private void loanBook(){
+    private void loanBook() {
         System.out.println("\nОформление выдачи книги:");
         int bookId = getIntInput("Введите ID книги: ");
         int userId = getIntInput("Введите ID пользователя: ");
@@ -198,7 +199,7 @@ public class ConsoleMenu {
         }
     }
 
-    private void returnBook(){
+    private void returnBook() {
         System.out.println("\nОформление возврата книги:");
         int bookId = getIntInput("Введите ID книги: ");
         int userId = getIntInput("Введите ID пользователя: ");
@@ -282,13 +283,13 @@ public class ConsoleMenu {
     private void printLoanInfo(Loan loan) {
         System.out.println("ID книги: " + loan.getBookId() +
                 ", ID пользователя: " + loan.getUserId() +
-                ", Дата выдачи книги: " + loan.getLoanDate()+
+                ", Дата выдачи книги: " + loan.getLoanDate() +
                 ", Дата возврата книги: " + loan.getReturnDate());
     }
 
     private void printLoans(List<Loan> loans) {
         for (Loan loan : loans) {
-           printLoanInfo(loan);
+            printLoanInfo(loan);
         }
     }
 

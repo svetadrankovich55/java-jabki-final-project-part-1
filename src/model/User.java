@@ -47,7 +47,7 @@ public class User {
         currentLoans.add(loan);
     }
 
-    public void removeLoan(Loan loan){
+    public void removeLoan(Loan loan) {
         currentLoans.remove(loan);
     }
 

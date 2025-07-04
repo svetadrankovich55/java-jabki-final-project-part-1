@@ -4,7 +4,7 @@ import model.Book;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BookTest {
 
@@ -15,7 +15,7 @@ public class BookTest {
 
     @Test
     void testBookCreation() {
-        Book book = new Book( "Title", "Author", 2025, 5, 3);
+        Book book = new Book("Title", "Author", 2025, 5, 3);
 
         assertEquals(1, book.getId());
         assertEquals("Title", book.getTitle());
@@ -27,7 +27,7 @@ public class BookTest {
 
     @Test
     void testSettersAndGetters() {
-        Book book = new Book( "Мир и война", "Толстой", 1818, 5000000, 3000000);
+        Book book = new Book("Мир и война", "Толстой", 1818, 5000000, 3000000);
         book.setTitle("Война и мир");
         book.setAuthor("Толстой Л.Н.");
         book.setYear(1867);
