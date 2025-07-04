@@ -1,5 +1,7 @@
 package model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class User {
@@ -8,11 +10,13 @@ public class User {
     private final int id;
     private String name;
     private String email;
+    private List<Loan> currentLoans;
 
     public User(String name, String email) {
         this.id = ++lastId;
         this.name = name;
         this.email = email;
+        this.currentLoans = new ArrayList<>();
     }
 
     public int getId() {
@@ -33,6 +37,18 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Loan> getCurrentLoans() {
+        return currentLoans;
+    }
+
+    public void addLoan(Loan loan) {
+        currentLoans.add(loan);
+    }
+
+    public void removeLoan(Loan loan) {
+        currentLoans.remove(loan);
     }
 
     @Override
